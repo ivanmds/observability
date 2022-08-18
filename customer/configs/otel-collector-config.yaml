@@ -1,0 +1,42 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+      http:
+
+processors:
+  batch:
+
+exporters:
+  # log to the console
+  logging:
+    logLevel: debug
+
+
+  zipkin:
+    endpoint: "http://zipkin:9411/api/v2/spans"
+  
+  loki:
+    endpoint: "http://loki:3100/loki/api/v1/push"
+    tenant_id: "example1"
+    labels:
+      attributes:
+        container_name: ""
+        container_id: ""
+
+extensions:
+  health_check:
+  pprof:
+  zpages:
+
+service:
+  extensions: [health_check,pprof,zpages]
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [zipkin]
+    logs:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [logging, loki]
