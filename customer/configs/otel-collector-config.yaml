@@ -8,21 +8,27 @@ processors:
   batch:
 
 exporters:
-  # log to the console
-  logging:
-    logLevel: debug
-
 
   zipkin:
     endpoint: "http://zipkin:9411/api/v2/spans"
   
   loki:
-    endpoint: "http://loki:3100/loki/api/v1/push"
-    tenant_id: "example1"
+    endpoint: http://loki:3100/loki/api/v1/push
+    format: json
     labels:
-      attributes:
-        container_name: ""
-        container_id: ""
+      resource:
+        deployment.environment: "deployment_environment"
+        host.name: "host_name"
+        service.name: "service_name"
+        service.namespace: "service_namespace"
+      record:
+        severity: "severity"
+    tenant_id: tenant1
+    tls:
+      insecure: true
+
+  file:
+    path: /etc/output/logs.json
 
 extensions:
   health_check:
@@ -39,4 +45,4 @@ service:
     logs:
       receivers: [otlp]
       processors: [batch]
-      exporters: [logging, loki]
+      exporters: [loki, file]

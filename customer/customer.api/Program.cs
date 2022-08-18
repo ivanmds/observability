@@ -37,12 +37,15 @@ builder.Services.AddOpenTelemetryTracing(tracerProviderBuilder =>
         .AddAspNetCoreInstrumentation();
 });
 
-builder.Logging.AddOpenTelemetry(builder =>
+builder.Logging.AddOpenTelemetry(loggingbuilder =>
 {
-    builder.IncludeFormattedMessage = true;
-    builder.IncludeScopes = true;
-    builder.ParseStateValues = true;
-    builder.AddOtlpExporter(options => options.Endpoint = new Uri("http://localhost:4317"));
+    //loggingbuilder.IncludeFormattedMessage = true;
+    //loggingbuilder.IncludeScopes = true;
+    //loggingbuilder.ParseStateValues = true;
+    loggingbuilder.AddOtlpExporter(opt =>
+    {
+        opt.Protocol = OtlpExportProtocol.HttpProtobuf;
+    });
 });
 
 
