@@ -1,7 +1,7 @@
-using System.Diagnostics;
-using OpenTelemetry;
+using System.Diagnostics.Metrics;
 using OpenTelemetry.Exporter;
 using OpenTelemetry.Logs;
+using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 
@@ -20,6 +20,31 @@ var service = builder.Services;
 // Define some important constants to initialize tracing with
 var serviceName = "customers";
 var serviceVersion = "1.0.0";
+
+Meter _meter = new Meter("Customer", "1.0.0");
+Counter<int> _counter = _meter.CreateCounter<int>("customer-requests");
+Histogram<float> _histogram = _meter.CreateHistogram<float>("RequestDuration", unit: "ms");
+_meter.CreateObservableGauge("ThreadCount", () => new[] { new Measurement<int>(ThreadPool.ThreadCount) });
+
+builder.Services.AddSingleton(_counter);
+builder.Services.AddSingleton(_histogram);
+
+
+builder.Services.AddOpenTelemetryMetrics(builder =>
+{
+    builder.AddHttpClientInstrumentation();
+    builder.AddAspNetCoreInstrumentation();
+    builder.AddMeter("MyApplicationMetrics");
+    builder.SetResourceBuilder(
+            ResourceBuilder.CreateDefault()
+                .AddService(serviceName: serviceName, serviceVersion: serviceVersion));
+
+    builder.AddOtlpExporter(opt =>
+    {
+        opt.Protocol = OtlpExportProtocol.HttpProtobuf;
+    });
+});
+
 
 // Configure important OpenTelemetry settings, the console exporter, and instrumentation library
 builder.Services.AddOpenTelemetryTracing(tracerProviderBuilder =>

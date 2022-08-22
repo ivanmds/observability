@@ -6,6 +6,17 @@ services:
     container_name: grafana
     ports:
       - "3000:3000"
+  
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/configs/prometheus.yml
+    command:
+      - '--config.file=/configs/prometheus.yml'
 
   collector:
     image: otel/opentelemetry-collector-contrib
@@ -16,6 +27,8 @@ services:
     ports:
       - 4318:4318
       - 4317:4317
+      - "8888:8888"
+      - "8889:8889"
     depends_on:
       - zipkin
       - loki
