@@ -22,19 +22,18 @@ var serviceName = "customers";
 var serviceVersion = "1.0.0";
 
 Meter _meter = new Meter("Customer", "1.0.0");
-Counter<int> _counter = _meter.CreateCounter<int>("customer-requests");
-Histogram<float> _histogram = _meter.CreateHistogram<float>("RequestDuration", unit: "ms");
-_meter.CreateObservableGauge("ThreadCount", () => new[] { new Measurement<int>(ThreadPool.ThreadCount) });
+Counter<int> _counter = _meter.CreateCounter<int>("test_request_count");
 
+builder.Services.AddSingleton(_meter);
 builder.Services.AddSingleton(_counter);
-builder.Services.AddSingleton(_histogram);
 
 
 builder.Services.AddOpenTelemetryMetrics(builder =>
 {
-    builder.AddHttpClientInstrumentation();
-    builder.AddAspNetCoreInstrumentation();
-    builder.AddMeter("MyApplicationMetrics");
+
+    //builder.AddHttpClientInstrumentation();
+    //builder.AddAspNetCoreInstrumentation();
+    builder.AddMeter("Customer");
     builder.SetResourceBuilder(
             ResourceBuilder.CreateDefault()
                 .AddService(serviceName: serviceName, serviceVersion: serviceVersion));
@@ -43,6 +42,7 @@ builder.Services.AddOpenTelemetryMetrics(builder =>
     {
         opt.Protocol = OtlpExportProtocol.HttpProtobuf;
     });
+    builder.AddConsoleExporter();
 });
 
 

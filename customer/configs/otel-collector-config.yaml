@@ -3,22 +3,12 @@ receivers:
     protocols:
       grpc:
       http:
-  
-  hostmetrics:
-    collection_interval: 5s
-    scrapers:
-      cpu:
-      disk:
-      filesystem:
-      load:
-      memory:
-      network:
-      paging:
 
 processors:
   batch:
 
 exporters:
+
   prometheus:
     endpoint: "0.0.0.0:8889"
 
@@ -62,4 +52,4 @@ service:
     metrics:
       receivers: [otlp]
       processors: [batch]
-      exporters: [prometheus]
+      exporters: [file, prometheus]
