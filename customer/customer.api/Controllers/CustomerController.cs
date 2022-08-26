@@ -10,6 +10,7 @@ namespace customer.api.Controllers
     [ApiController]
     public class CustomerController : ControllerBase
     {
+        private static HttpClient _client = new HttpClient();
         private static List<Customer> _customers = new List<Customer>();
 
         private readonly ILogger<CustomerController> _logger;
@@ -24,12 +25,15 @@ namespace customer.api.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<Customer> Get()
+        public async Task<IEnumerable<Customer>> Get()
         {
             _counter.Add(1);
             var stopwatch = Stopwatch.StartNew();
 
+            var response = await _client.GetAsync("http://localhost:5131/api/transaction");
+            
             _logger.LogInformation("Get to customers");
+
             using var activity = _activitySource.StartActivity("GetCustomers");
             activity?.SetTag("foo", 1);
 

@@ -14,14 +14,12 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-var service = builder.Services;
-
 
 // Define some important constants to initialize tracing with
-var serviceName = "customers";
+var serviceName = "antifraud";
 var serviceVersion = "1.0.0";
 
-Meter _meter = new Meter("Customer", "1.0.0");
+Meter _meter = new Meter("Antifraud", "1.0.0");
 Counter<int> _counter = _meter.CreateCounter<int>("test_request_count");
 
 builder.Services.AddSingleton(_meter);
@@ -33,7 +31,7 @@ builder.Services.AddOpenTelemetryMetrics(builder =>
 
     //builder.AddHttpClientInstrumentation();
     //builder.AddAspNetCoreInstrumentation();
-    builder.AddMeter("Customer");
+    builder.AddMeter("Antifraud");
     builder.SetResourceBuilder(
             ResourceBuilder.CreateDefault()
                 .AddService(serviceName: serviceName, serviceVersion: serviceVersion));
@@ -42,7 +40,6 @@ builder.Services.AddOpenTelemetryMetrics(builder =>
     {
         opt.Protocol = OtlpExportProtocol.HttpProtobuf;
     });
-    builder.AddConsoleExporter();
 });
 
 builder.Services.AddOpenTelemetryTracing(tracerProviderBuilder =>
@@ -56,8 +53,8 @@ builder.Services.AddOpenTelemetryTracing(tracerProviderBuilder =>
         .SetResourceBuilder(
             ResourceBuilder.CreateDefault()
                 .AddService(serviceName: serviceName, serviceVersion: serviceVersion))
-        .AddHttpClientInstrumentation()
-        .AddAspNetCoreInstrumentation();
+         .AddHttpClientInstrumentation()
+         .AddAspNetCoreInstrumentation();
 });
 
 builder.Logging.AddOpenTelemetry(loggingbuilder =>
@@ -69,6 +66,8 @@ builder.Logging.AddOpenTelemetry(loggingbuilder =>
 });
 
 
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -77,8 +76,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
-
 
 app.UseHttpsRedirection();
 

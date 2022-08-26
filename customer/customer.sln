@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.1.32421.90
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "customer.api", "customer.api\customer.api.csproj", "{11F6126B-2890-4E9B-9407-088074A3E7C0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "customer.api", "customer.api\customer.api.csproj", "{11F6126B-2890-4E9B-9407-088074A3E7C0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Antifrand.Api", "Antifrand.Api\Antifrand.Api.csproj", "{E3F290E7-68A6-4ACB-9E9F-E07DEC36F078}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{11F6126B-2890-4E9B-9407-088074A3E7C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{11F6126B-2890-4E9B-9407-088074A3E7C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{11F6126B-2890-4E9B-9407-088074A3E7C0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E3F290E7-68A6-4ACB-9E9F-E07DEC36F078}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E3F290E7-68A6-4ACB-9E9F-E07DEC36F078}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E3F290E7-68A6-4ACB-9E9F-E07DEC36F078}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E3F290E7-68A6-4ACB-9E9F-E07DEC36F078}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
