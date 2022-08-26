@@ -11,36 +11,48 @@ namespace customer.api.Repository
         private readonly IMongoCollection<Customer> _mongoCollection;
         private readonly ActivitySource _activitySource;
 
-        public CustomerRepository()
+        public CustomerRepository(ActivitySource activitySource)
         {
-            _activitySource = new ActivitySource("CustomerRepository");
             _client = new MongoClient("mongodb://user:pwd@localhost:27017/admin");
             _database = _client.GetDatabase("test_system");
             _mongoCollection = _database.GetCollection<Customer>("customers");
+            _activitySource = activitySource;
         }
 
         public Customer GetByDocumentNumber(string documentNumber)
         {
-            using var activity = _activitySource.StartActivity("GetByDocumentNumber");
-            return _mongoCollection.Find(c => c.DocumentNumber == documentNumber).FirstOrDefault();
+            var activity = _activitySource.StartActivity("CustomerRepository.GetByDocumentNumber");
+            using (activity)
+            {
+                return _mongoCollection.Find(c => c.DocumentNumber == documentNumber).FirstOrDefault();
+            }
         }
 
         public IEnumerable<Customer> FindAll()
         {
-            using var activity = _activitySource.StartActivity("FindAll");
-            return _mongoCollection.Find(c => c.DocumentNumber != "").ToList();
+            var activity = _activitySource.StartActivity("CustomerRepository.FindAll");
+            using (activity)
+            {
+                return _mongoCollection.Find(c => c.DocumentNumber != "").ToList();
+            }
         }
 
         public void InsertOne(Customer customer)
         {
-            using var activity = _activitySource.StartActivity("InsertOne");
-            _mongoCollection.InsertOne(customer);
+            var activity = _activitySource.StartActivity("CustomerRepository.InsertOne");
+            using (activity)
+            {
+                _mongoCollection.InsertOne(customer);
+            }
         }
 
         public void ReplaceOne(Customer customer)
         {
-            using var activity = _activitySource.StartActivity("ReplaceOne");
-            _mongoCollection.ReplaceOne(m => m._id == customer._id, customer);
+            var activity = _activitySource.StartActivity("CustomerRepository.ReplaceOne");
+            using (activity)
+            {
+                _mongoCollection.ReplaceOne(m => m._id == customer._id, customer);
+            }
         }
     }
 }

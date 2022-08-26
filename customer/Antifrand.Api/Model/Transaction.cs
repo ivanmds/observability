@@ -2,6 +2,7 @@
 {
     public class Transaction
     {
-        public decimal Amount { get; set; }
+        public string _id { get; set; }
+        public string Amount { get; set; }
     }
 }

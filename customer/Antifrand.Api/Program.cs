@@ -1,4 +1,6 @@
+using System.Diagnostics;
 using System.Diagnostics.Metrics;
+using Antifrand.Api.Repositories;
 using OpenTelemetry.Exporter;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
@@ -21,9 +23,11 @@ var serviceVersion = "1.0.0";
 
 Meter _meter = new Meter("Antifraud", "1.0.0");
 Counter<int> _counter = _meter.CreateCounter<int>("test_request_count");
+var activitySource = new ActivitySource(serviceName);
 
 builder.Services.AddSingleton(_meter);
 builder.Services.AddSingleton(_counter);
+builder.Services.AddSingleton(activitySource);
 
 
 builder.Services.AddOpenTelemetryMetrics(builder =>
@@ -66,6 +70,7 @@ builder.Logging.AddOpenTelemetry(loggingbuilder =>
 });
 
 
+builder.Services.AddSingleton<TransactionRepository>();
 
 
 var app = builder.Build();

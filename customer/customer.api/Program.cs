@@ -1,5 +1,7 @@
+using System.Diagnostics;
 using System.Diagnostics.Metrics;
 using customer.api.Repository;
+using OpenTelemetry;
 using OpenTelemetry.Exporter;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
@@ -24,9 +26,11 @@ var serviceVersion = "1.0.0";
 
 Meter _meter = new Meter("Customer", "1.0.0");
 Counter<int> _counter = _meter.CreateCounter<int>("test_request_count");
+var activitySource = new ActivitySource(serviceName);
 
 builder.Services.AddSingleton(_meter);
 builder.Services.AddSingleton(_counter);
+builder.Services.AddSingleton(activitySource);
 
 
 builder.Services.AddOpenTelemetryMetrics(builder =>
@@ -61,6 +65,7 @@ builder.Services.AddOpenTelemetryTracing(tracerProviderBuilder =>
         .AddAspNetCoreInstrumentation();
 });
 
+
 builder.Logging.AddOpenTelemetry(loggingbuilder =>
 {
     loggingbuilder.AddOtlpExporter(opt =>
@@ -70,8 +75,7 @@ builder.Logging.AddOpenTelemetry(loggingbuilder =>
 });
 
 
-var customerRepository = new CustomerRepository();
-builder.Services.AddSingleton(customerRepository);
+builder.Services.AddSingleton<CustomerRepository>();
 
 var app = builder.Build();
 

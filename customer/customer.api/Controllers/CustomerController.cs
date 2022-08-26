@@ -18,12 +18,12 @@ namespace customer.api.Controllers
         private readonly CustomerRepository _customerRepository;
         private readonly ActivitySource _activitySource;
 
-        public CustomerController(ILogger<CustomerController> logger, Counter<int> counter, CustomerRepository customerRepository)
+        public CustomerController(ILogger<CustomerController> logger, Counter<int> counter, CustomerRepository customerRepository, ActivitySource activitySource)
         {
-            _activitySource = new ActivitySource("customers");
             _logger = logger;
             _counter = counter;
             _customerRepository = customerRepository;
+            _activitySource = activitySource;
         }
 
         [HttpGet]

@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Diagnostics.Metrics;
 using Antifrand.Api.Model;
+using Antifrand.Api.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
@@ -14,37 +15,31 @@ namespace Antifrand.Api.Controllers
 
         private readonly ILogger<TransactionController> _logger;
         private readonly Counter<int> _counter;
-        private readonly ActivitySource _activitySource;
+        private readonly TransactionRepository _transactionRepository;
 
-        public TransactionController(ILogger<TransactionController> logger, Counter<int> counter)
+        public TransactionController(ILogger<TransactionController> logger, Counter<int> counter, TransactionRepository transactionRepository)
         {
-            _activitySource = new ActivitySource("customers");
             _logger = logger;
             _counter = counter;
+            _transactionRepository = transactionRepository;
         }
 
         [HttpGet]
         public IEnumerable<Transaction> Get()
         {
             _counter.Add(1);
-            var stopwatch = Stopwatch.StartNew();
-
             _logger.LogInformation("Get to transactions");
-            using var activity = _activitySource.StartActivity("GetTransactions");
-            activity?.SetTag("foo", 1);
-
-
-
-            stopwatch.Stop();
-            return _transactions;
+            
+            var transactions = _transactionRepository.FindAll();
+            return transactions;
         }
 
         [HttpPut]
-        public void Put(Transaction customer)
+        public void Put(Transaction transaction)
         {
             _counter.Add(1);
-            _transactions.Add(customer);
-            var jsonLog = JsonConvert.SerializeObject(customer);
+            _transactionRepository.InsertOne(transaction);
+            var jsonLog = JsonConvert.SerializeObject(transaction);
             _logger.LogInformation(jsonLog);
         }
     }
