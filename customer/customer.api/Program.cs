@@ -1,4 +1,5 @@
 using System.Diagnostics.Metrics;
+using customer.api.Repository;
 using OpenTelemetry.Exporter;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
@@ -68,6 +69,9 @@ builder.Logging.AddOpenTelemetry(loggingbuilder =>
     });
 });
 
+
+var customerRepository = new CustomerRepository();
+builder.Services.AddSingleton(customerRepository);
 
 var app = builder.Build();
 
