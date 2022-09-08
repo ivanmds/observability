@@ -6,6 +6,8 @@ services:
     container_name: grafana
     ports:
       - "3000:3000"
+    networks:
+      - open-telemetry
   
   prometheus:
     image: prom/prometheus:latest
@@ -17,6 +19,8 @@ services:
       - ./prometheus.yml:/configs/prometheus.yml
     command:
       - '--config.file=/configs/prometheus.yml'
+    networks:
+      - open-telemetry
 
   collector:
     image: otel/opentelemetry-collector-contrib
@@ -29,20 +33,26 @@ services:
       - 4317:4317
       - 8888:8888
       - 8889:8889
+    networks:
+      - open-telemetry
     depends_on:
-      - zipkin
-      - loki
-      - prometheus
+      - elastic
+
   
   zipkin:
     image: openzipkin/zipkin
     ports:
       - 9411:9411
+    networks:
+      - open-telemetry
   
   loki:
     image: grafana/loki
     ports:
       - 3100:3100
+    networks:
+      - open-telemetry
+  
   
   # tempo:
   #   image: grafana/tempo:latest
@@ -62,3 +72,10 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: user
       MONGO_INITDB_ROOT_PASSWORD: pwd
+    networks:
+      - open-telemetry
+
+
+networks: 
+  open-telemetry:
+    driver: bridge  

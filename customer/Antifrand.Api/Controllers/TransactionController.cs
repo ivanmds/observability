@@ -28,7 +28,7 @@ namespace Antifrand.Api.Controllers
         public IEnumerable<Transaction> Get()
         {
             _counter.Add(1);
-            _logger.LogInformation("Get to transactions");
+            _logger.LogInformation("{ test: 'test' }");
             
             var transactions = _transactionRepository.FindAll();
             return transactions;

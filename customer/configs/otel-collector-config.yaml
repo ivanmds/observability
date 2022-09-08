@@ -36,6 +36,9 @@ exporters:
 
   file:
     path: /etc/output/logs.json
+  
+  # otlphttp/elasticsearch: 
+  #   endpoint: "http://elastic:9200"
 
 extensions:
   health_check:
@@ -52,7 +55,7 @@ service:
     logs:
       receivers: [otlp]
       processors: [batch]
-      exporters: [loki]
+      exporters: [file, loki]
     metrics:
       receivers: [otlp]
       processors: [batch]
