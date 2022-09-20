@@ -11,6 +11,7 @@ exporters:
 
   prometheus:
     endpoint: "0.0.0.0:8889"
+    #http://prometheus:9090/api/v1/write
 
   zipkin:
     endpoint: "http://zipkin:9411/api/v2/spans"

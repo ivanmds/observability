@@ -1,7 +1,6 @@
 using System.Diagnostics;
 using System.Diagnostics.Metrics;
 using customer.api.Repository;
-using OpenTelemetry;
 using OpenTelemetry.Exporter;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
@@ -46,6 +45,7 @@ builder.Services.AddOpenTelemetryMetrics(builder =>
     builder.AddOtlpExporter(opt =>
     {
         opt.Protocol = OtlpExportProtocol.HttpProtobuf;
+        //opt.Endpoint = new Uri("http://localhost:4318");
     });
     builder.AddConsoleExporter();
 });
@@ -56,6 +56,7 @@ builder.Services.AddOpenTelemetryTracing(tracerProviderBuilder =>
          .AddOtlpExporter(opt =>
          {
              opt.Protocol = OtlpExportProtocol.HttpProtobuf;
+             opt.Endpoint = new Uri("towner-collector-metric.acesso.stg-services:80");
          })
         .AddSource(serviceName)
         .SetResourceBuilder(
@@ -63,6 +64,7 @@ builder.Services.AddOpenTelemetryTracing(tracerProviderBuilder =>
                 .AddService(serviceName: serviceName, serviceVersion: serviceVersion))
         .AddHttpClientInstrumentation()
         .AddAspNetCoreInstrumentation();
+        
 });
 
 
@@ -72,6 +74,7 @@ builder.Logging.AddOpenTelemetry(loggingbuilder =>
     {
         opt.Protocol = OtlpExportProtocol.HttpProtobuf;
     });
+    loggingbuilder.AddConsoleExporter();
 });
 
 
