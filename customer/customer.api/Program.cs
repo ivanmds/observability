@@ -31,12 +31,12 @@ builder.Services.AddSingleton(_meter);
 builder.Services.AddSingleton(_counter);
 builder.Services.AddSingleton(activitySource);
 
-
+string uri = Environment.GetEnvironmentVariable("COLLECTOR_URI") ?? "http://localhost:4318";
 builder.Services.AddOpenTelemetryMetrics(builder =>
 {
-
     //builder.AddHttpClientInstrumentation();
     //builder.AddAspNetCoreInstrumentation();
+    Console.WriteLine(uri);
     builder.AddMeter("Customer");
     builder.SetResourceBuilder(
             ResourceBuilder.CreateDefault()
@@ -45,56 +45,52 @@ builder.Services.AddOpenTelemetryMetrics(builder =>
     builder.AddOtlpExporter(opt =>
     {
         opt.Protocol = OtlpExportProtocol.HttpProtobuf;
-        //opt.Endpoint = new Uri("http://localhost:4318");
+        opt.Endpoint = new Uri(uri);
+        
     });
+
     builder.AddConsoleExporter();
 });
 
-builder.Services.AddOpenTelemetryTracing(tracerProviderBuilder =>
-{
-    tracerProviderBuilder
-         .AddOtlpExporter(opt =>
-         {
-             opt.Protocol = OtlpExportProtocol.HttpProtobuf;
-             opt.Endpoint = new Uri("towner-collector-metric.acesso.stg-services:80");
-         })
-        .AddSource(serviceName)
-        .SetResourceBuilder(
-            ResourceBuilder.CreateDefault()
-                .AddService(serviceName: serviceName, serviceVersion: serviceVersion))
-        .AddHttpClientInstrumentation()
-        .AddAspNetCoreInstrumentation();
-        
-});
+
+//builder.Services.AddOpenTelemetryTracing(tracerProviderBuilder =>
+//{
+//    tracerProviderBuilder
+//         .AddOtlpExporter(opt =>
+//         {
+//             opt.Protocol = OtlpExportProtocol.HttpProtobuf;
+//             opt.Endpoint = new Uri(uri);
+//         })
+//        .AddSource(serviceName)
+//        .SetResourceBuilder(
+//            ResourceBuilder.CreateDefault()
+//                .AddService(serviceName: serviceName, serviceVersion: serviceVersion))
+//        .AddHttpClientInstrumentation()
+//        .AddAspNetCoreInstrumentation();
+
+//});
 
 
-builder.Logging.AddOpenTelemetry(loggingbuilder =>
-{
-    loggingbuilder.AddOtlpExporter(opt =>
-    {
-        opt.Protocol = OtlpExportProtocol.HttpProtobuf;
-    });
-    loggingbuilder.AddConsoleExporter();
-});
+//builder.Logging.AddOpenTelemetry(loggingbuilder =>
+//{
+//    loggingbuilder.AddOtlpExporter(opt =>
+//    {
+//        opt.Protocol = OtlpExportProtocol.HttpProtobuf;
+//        opt.Endpoint = new Uri(uri);
+//    });
+//    loggingbuilder.AddConsoleExporter();
+//});
 
 
 builder.Services.AddSingleton<CustomerRepository>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
+app.UseSwagger();
+app.UseSwaggerUI();
 
 
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
-
 app.MapControllers();
-
 app.Run();

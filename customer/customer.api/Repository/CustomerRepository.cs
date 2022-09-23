@@ -13,7 +13,9 @@ namespace customer.api.Repository
 
         public CustomerRepository(ActivitySource activitySource)
         {
-            _client = new MongoClient("mongodb://user:pwd@localhost:27017/admin");
+
+            string connection = Environment.GetEnvironmentVariable("MONGO_CONNECTION") ?? "mongodb://user:pwd@localhost:27017/admin";
+            _client = new MongoClient(connection);
             _database = _client.GetDatabase("test_system");
             _mongoCollection = _database.GetCollection<Customer>("customers");
             _activitySource = activitySource;
