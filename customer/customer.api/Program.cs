@@ -32,11 +32,17 @@ builder.Services.AddSingleton(_counter);
 builder.Services.AddSingleton(activitySource);
 
 string uri = Environment.GetEnvironmentVariable("COLLECTOR_URI") ?? "http://localhost:4318";
+
+var isGrpcValue = Environment.GetEnvironmentVariable("IS_GRPC");
+bool isGrpc = isGrpcValue == "YES" ? true : false;
+
+Console.WriteLine(uri);
+Console.WriteLine(isGrpc);
+
 builder.Services.AddOpenTelemetryMetrics(builder =>
 {
     //builder.AddHttpClientInstrumentation();
     //builder.AddAspNetCoreInstrumentation();
-    Console.WriteLine(uri);
     builder.AddMeter("Customer");
     builder.SetResourceBuilder(
             ResourceBuilder.CreateDefault()
@@ -44,7 +50,7 @@ builder.Services.AddOpenTelemetryMetrics(builder =>
 
     builder.AddOtlpExporter(opt =>
     {
-        opt.Protocol = OtlpExportProtocol.HttpProtobuf;
+        opt.Protocol = isGrpc ? OtlpExportProtocol.Grpc : OtlpExportProtocol.HttpProtobuf;
         opt.Endpoint = new Uri(uri);
         
     });
@@ -53,33 +59,33 @@ builder.Services.AddOpenTelemetryMetrics(builder =>
 });
 
 
-//builder.Services.AddOpenTelemetryTracing(tracerProviderBuilder =>
-//{
-//    tracerProviderBuilder
-//         .AddOtlpExporter(opt =>
-//         {
-//             opt.Protocol = OtlpExportProtocol.HttpProtobuf;
-//             opt.Endpoint = new Uri(uri);
-//         })
-//        .AddSource(serviceName)
-//        .SetResourceBuilder(
-//            ResourceBuilder.CreateDefault()
-//                .AddService(serviceName: serviceName, serviceVersion: serviceVersion))
-//        .AddHttpClientInstrumentation()
-//        .AddAspNetCoreInstrumentation();
+builder.Services.AddOpenTelemetryTracing(tracerProviderBuilder =>
+{
+    tracerProviderBuilder
+         .AddOtlpExporter(opt =>
+         {
+             opt.Protocol = isGrpc ? OtlpExportProtocol.Grpc : OtlpExportProtocol.HttpProtobuf;
+             opt.Endpoint = new Uri(uri);
+         })
+        .AddSource(serviceName)
+        .SetResourceBuilder(
+            ResourceBuilder.CreateDefault()
+                .AddService(serviceName: serviceName, serviceVersion: serviceVersion))
+        .AddHttpClientInstrumentation()
+        .AddAspNetCoreInstrumentation();
 
-//});
+});
 
 
-//builder.Logging.AddOpenTelemetry(loggingbuilder =>
-//{
-//    loggingbuilder.AddOtlpExporter(opt =>
-//    {
-//        opt.Protocol = OtlpExportProtocol.HttpProtobuf;
-//        opt.Endpoint = new Uri(uri);
-//    });
-//    loggingbuilder.AddConsoleExporter();
-//});
+builder.Logging.AddOpenTelemetry(loggingbuilder =>
+{
+    loggingbuilder.AddOtlpExporter(opt =>
+    {
+        opt.Protocol = isGrpc ? OtlpExportProtocol.Grpc : OtlpExportProtocol.HttpProtobuf;
+        opt.Endpoint = new Uri(uri);
+    });
+    loggingbuilder.AddConsoleExporter();
+});
 
 
 builder.Services.AddSingleton<CustomerRepository>();
