@@ -1,0 +1,20 @@
+version: '3.4'
+
+services:
+  data-prepper:
+    image: amazon/opendistro-for-elasticsearch-data-prepper:latest
+    expose:
+      - 21890
+    ports:
+      - "21890:21890"
+      - "4900:4900"
+      - "2021:2021"
+      - "9200:9200"
+      - "9600:9600"
+    # volumes:
+    #   - ./pipelines.yml:/usr/share/data-prepper/pipelines/pipelines.yaml
+    #   - ./data-prepper-config.yaml:/usr/share/data-prepper/config/data-prepper-config.yaml
+    #   - ./root-ca.pem:/usr/share/data-prepper/root-ca.pem
+    volumes:
+      - ./pipelines.yml:/usr/share/data-prepper/pipelines.yaml
+      - ./data-prepper-config.yaml:/usr/share/data-prepper/data-prepper-config.yaml

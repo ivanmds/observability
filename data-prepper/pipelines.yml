@@ -1,0 +1,53 @@
+# metrics-pipeline:
+#   source:
+#     otel_metrics_source:
+#       ssl: false
+#   processor:
+#     - otel_metrics_raw_processor:
+#   sink:
+#     - opensearch:
+#         hosts: [ "https://search-otel-observability-pnavvsotesoutscktdnfqejwy4.us-west-2.es.amazonaws.com:443" ]
+#         insecure: true
+#         username: "otel-admin"
+#         password: "Bankly_123"
+#         index: metrics-otel-v1-%{yyyy.MM.dd}
+
+# log-pipeline:
+#   source:
+#     http:
+#       ssl: false
+#   processor:
+#   sink:
+#     - opensearch:
+#         hosts: [ "https://search-otel-observability-pnavvsotesoutscktdnfqejwy4.us-west-2.es.amazonaws.com:443" ]
+#         insecure: true
+#         username: "otel-admin"
+#         password: "Bankly_123"
+#         index: logs-otel-v2-%{yyyy.MM}
+
+# simple-sample-pipeline:
+#   workers: 2
+#   delay: "1000"
+#   source:
+#     random:
+#   sink:
+#     - opensearch:
+#         hosts: [ "https://search-otel-observability-pnavvsotesoutscktdnfqejwy4.us-west-2.es.amazonaws.com:443" ]
+#         insecure: true
+#         username: "otel-admin"
+#         password: "Bankly_123"
+#         index: logs-otel-v1-%{yyyy.MM}
+
+metrics-pipeline:
+  source:
+    otel_trace_source:
+      ssl: false
+  prepper:
+    - otel_trace_raw_prepper:
+  sink:
+    - elasticsearch:
+        hosts: [ "https://search-otel-observability-pnavvsotesoutscktdnfqejwy4.us-west-2.es.amazonaws.com:443" ]
+        insecure: true
+        username: "otel-admin"
+        password: "Bankly_123"
+        index: metrics-otel-v1-test

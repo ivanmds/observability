@@ -4,43 +4,71 @@ receivers:
       grpc:
       http:
 
-processors:
-  batch:
-
 exporters:
 
-  prometheus:
-    endpoint: "0.0.0.0:8889"
-    #http://prometheus:9090/api/v1/write
+  # prometheus:
+  #   #endpoint: "0.0.0.0:8889"
+  #   endpoint: http://prometheus:9090/api/v1/write
+  #   tls:
+  #     insecure: true
 
-  zipkin:
-    endpoint: "http://zipkin:9411/api/v2/spans"
+  # prometheusremotewrite:
+  #   endpoint: "http://prometheus:9090/api/v1/write"
+  #   tls:
+  #     insecure: true
+
+  # zipkin:
+  #   endpoint: "http://zipkin:9411/api/v2/spans"
 
   # tempo:
   #   endpoint: tempo:4322
   #   insecure: false
   
-  loki:
-    endpoint: http://loki:3100/loki/api/v1/push
-    format: json
-    labels:
-      resource:
-        deployment.environment: "deployment_environment"
-        host.name: "host_name"
-        service.name: "service_name"
-        service.namespace: "service_namespace"
-      record:
-        severity: "severity"
-    tenant_id: tenant1
-    tls:
-      insecure: true
+  # loki:
+  #   endpoint: http://loki:3100/loki/api/v1/push
+  #   format: json
+  #   labels:
+  #     resource:
+  #       deployment.environment: "deployment_environment"
+  #       host.name: "host_name"
+  #       service.name: "service_name"
+  #       service.namespace: "service_namespace"
+  #     record:
+  #       severity: "severity"
+  #   tenant_id: tenant1
+  #   tls:
+  #     insecure: true
 
-  file:
-    path: /etc/output/logs.json
+  # file:
+  #   path: /etc/output/logs2.json
   
   # otlphttp/elasticsearch: 
   #   endpoint: "http://elastic:9200"
 
+  # elasticsearch/trace:
+  #   endpoint: http://apm.hml.aws.acesso.intra:9200
+  #   tls:
+  #     insecure: true
+
+  # otlp/elastic:
+  #   endpoint: "apm.hml.aws.acesso.intra:9200" 
+  #   tls:
+  #     insecure: true
+  # otlp/elastic:
+  #   endpoint: 'http://apm.hml.aws.acesso.intra:9200'
+  #   tls:
+  #     insecure: true
+  
+  otlp/data-prepper:
+    endpoint: localhost:21890
+    tls:
+      insecure: true
+
+  # otlphttp:
+  #   endpoint: localhost:2021
+  #   tls:
+  #     insecure: true
+      
 extensions:
   health_check:
   pprof:
@@ -51,13 +79,10 @@ service:
   pipelines:
     traces:
       receivers: [otlp]
-      processors: [batch]
-      exporters: [zipkin]
-    logs:
-      receivers: [otlp]
-      processors: [batch]
-      exporters: [file, loki]
-    metrics:
-      receivers: [otlp]
-      processors: [batch]
-      exporters: [file, prometheus]
+      exporters: [otlp/data-prepper]
+    # logs:
+    #   receivers: [otlp]
+    #   exporters: [otlp/data-prepper]
+    # metrics:
+    #   receivers: [otlp]
+    #   exporters: [otlp/2]

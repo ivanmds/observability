@@ -14,40 +14,39 @@ namespace customer.api.Controllers
         private static HttpClient _client = new HttpClient();
 
         private readonly ILogger<CustomerController> _logger;
-        private readonly Counter<int> _counter;
         private readonly CustomerRepository _customerRepository;
-        private readonly ActivitySource _activitySource;
+        private static int increment = 0;
 
-        public CustomerController(ILogger<CustomerController> logger, Counter<int> counter, CustomerRepository customerRepository, ActivitySource activitySource)
+        public CustomerController(ILogger<CustomerController> logger, CustomerRepository customerRepository)
         {
             _logger = logger;
-            _counter = counter;
             _customerRepository = customerRepository;
-            _activitySource = activitySource;
         }
 
         [HttpGet]
-        public async Task<IEnumerable<Customer>> Get()
+        public async Task<ActionResult<IEnumerable<Customer>>> Get()
         {
-            _counter.Add(1);
+            increment++;
+            if (increment % 3 == 0)
+                return NotFound();
+
+            if (increment % 4 == 0)
+                throw new Exception("Server error");
+
 
             _logger.LogInformation("Get to customers");
 
-            var customers = _customerRepository.FindAll();
-
-            return customers;
+            return Ok(_customerRepository.FindAll());
         }
 
         [HttpPut]
         public async Task Put(Customer customer)
         {
-            _counter.Add(1);
-
             var customerFound = _customerRepository.GetByDocumentNumber(customer.DocumentNumber);
             if(customerFound == null)
                 _customerRepository.InsertOne(customer);
 
-            var response = await _client.GetAsync("http://localhost:5131/api/transaction");
+            //var response = await _client.GetAsync("http://localhost:5131/api/transaction");
 
 
             var jsonLog = JsonConvert.SerializeObject(customer);

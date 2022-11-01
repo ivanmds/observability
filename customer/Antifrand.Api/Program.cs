@@ -43,6 +43,7 @@ builder.Services.AddOpenTelemetryMetrics(builder =>
     builder.AddOtlpExporter(opt =>
     {
         opt.Protocol = OtlpExportProtocol.HttpProtobuf;
+        opt.Endpoint = new Uri("http://localhost:4318");
     });
 });
 
@@ -52,6 +53,7 @@ builder.Services.AddOpenTelemetryTracing(tracerProviderBuilder =>
          .AddOtlpExporter(opt =>
          {
              opt.Protocol = OtlpExportProtocol.HttpProtobuf;
+             opt.Endpoint = new Uri("http://localhost:4318");
          })
         .AddSource(serviceName)
         .SetResourceBuilder(
@@ -66,6 +68,7 @@ builder.Logging.AddOpenTelemetry(loggingbuilder =>
     loggingbuilder.AddOtlpExporter(opt =>
     {
         opt.Protocol = OtlpExportProtocol.HttpProtobuf;
+        opt.Endpoint = new Uri("http://localhost:4318");
     });
 });
 

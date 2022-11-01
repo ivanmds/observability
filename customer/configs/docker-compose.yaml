@@ -19,25 +19,22 @@ services:
   #     - ./prometheus.yml:/configs/prometheus.yml
   #   command:
   #     - '--config.file=/configs/prometheus.yml'
+  #     - '--web.enable-remote-write-receiver'
   #   networks:
   #     - open-telemetry
 
-  # collector:
-  #   image: otel/opentelemetry-collector-contrib
-  #   command: ["--config=/etc/otel-collector-config.yaml"]
-  #   volumes:
-  #     - ./otel-collector-config.yaml:/etc/otel-collector-config.yaml
-  #     - ./files:/etc/output/
-  #   ports:
-  #     - 4318:4318
-  #     - 4317:4317
-  #     - 8888:8888
-  #     - 8889:8889
-  #   networks:
-  #     - open-telemetry
-  #   depends_on:
-  #     - elk
-  
+  collector:
+    image: otel/opentelemetry-collector
+    command: ["--config=/etc/otel-collector-config.yaml"]
+    volumes:
+      - ./otel-collector-config.yaml:/etc/otel-collector-config.yaml
+      - ./files:/etc/output/
+    ports:
+      - 4318:4318
+      - 4317:4317
+      - 8888:8888
+      - 8889:8889
+   
   # zipkin:
   #   image: openzipkin/zipkin
   #   ports:
@@ -64,25 +61,17 @@ services:
   #     - "4321:4317"  # otlp grpc
   #     - "4322:4318"  # otlp http
 
-  # mongo:
-  #   image: mongo
-  #   ports:
-  #     - "27017:27017"
-  #   environment:
-  #     MONGO_INITDB_ROOT_USERNAME: userdoc
-  #     MONGO_INITDB_ROOT_PASSWORD: pwd
-  #   networks:
-  #     - open-telemetry
-
-  elk:
-    image: sebp/elk
+  mongo:
+    image: mongo
     ports:
-      - 5601:5601
-      - 9200:9200
-      - 5044:5044
-    networks:
-      - open-telemetry
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: userdoc
+      MONGO_INITDB_ROOT_PASSWORD: pwd
 
-networks: 
-  open-telemetry:
-    driver: bridge  
+  # elk:
+  #   image: sebp/elk
+  #   ports:
+  #     - 5601:5601
+  #     - 9200:9200
+  #     - 5044:5044
