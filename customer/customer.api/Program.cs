@@ -23,12 +23,12 @@ otlpConfig.Endpoint = "http://localhost:4317";
 otlpConfig.IsGrpc = true;
 otlpConfig.EnableConsoleExporter = true;
 
-builder.Services.AddOpenTelemetryMetrics(otlpConfig);
-builder.Services.AddOpenTelemetryTracing(otlpConfig);
-builder.Logging.AddOpenTelemetryLogging(otlpConfig);
+builder.Services.AddBanklyOpenTelemetryMetrics(otlpConfig);
+//builder.Services.AddBanklyOpenTelemetryTracing(otlpConfig);
+//builder.Logging.AddBanklyOpenTelemetryLogging(otlpConfig);
 
 
-builder.Services.AddSingleton<CustomerRepository>();
+//builder.Services.AddSingleton<CustomerRepository>();
 
 var app = builder.Build();
 
@@ -36,7 +36,7 @@ app.UseHttpLogging();
 app.UseSwagger();
 app.UseSwaggerUI();
 
-app.UseHttpMetrics();
+app.UseBanklyMetrics();
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();

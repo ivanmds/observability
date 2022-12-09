@@ -14,13 +14,11 @@ namespace customer.api.Controllers
         private static HttpClient _client = new HttpClient();
 
         private readonly ILogger<CustomerController> _logger;
-        private readonly CustomerRepository _customerRepository;
         private static int increment = 0;
 
-        public CustomerController(ILogger<CustomerController> logger, CustomerRepository customerRepository)
+        public CustomerController(ILogger<CustomerController> logger)
         {
             _logger = logger;
-            _customerRepository = customerRepository;
         }
 
         [HttpGet]
@@ -36,21 +34,21 @@ namespace customer.api.Controllers
 
             _logger.LogInformation("Get to customers");
 
-            return Ok(_customerRepository.FindAll());
+            return Ok(new List<Customer>());
         }
 
-        [HttpPut]
-        public async Task Put(Customer customer)
-        {
-            var customerFound = _customerRepository.GetByDocumentNumber(customer.DocumentNumber);
-            if(customerFound == null)
-                _customerRepository.InsertOne(customer);
+        //[HttpPut]
+        //public async Task Put(Customer customer)
+        //{
+        //    var customerFound = _customerRepository.GetByDocumentNumber(customer.DocumentNumber);
+        //    if(customerFound == null)
+        //        _customerRepository.InsertOne(customer);
 
-            //var response = await _client.GetAsync("http://localhost:5131/api/transaction");
+        //    //var response = await _client.GetAsync("http://localhost:5131/api/transaction");
 
 
-            var jsonLog = JsonConvert.SerializeObject(customer);
-            _logger.LogInformation(jsonLog);
-        }
+        //    var jsonLog = JsonConvert.SerializeObject(customer);
+        //    _logger.LogInformation(jsonLog);
+        //}
     }
 }

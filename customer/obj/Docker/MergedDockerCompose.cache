@@ -1,8 +1,8 @@
-name: dockercompose7196242915136893545
+name: dockercompose11374987439128681747
 services:
   customer.api:
     build:
-      context: C:\Users\isilva\source\repos\observability\customer
+      context: C:\Users\ivanmds\source\repos\observability\customer
       dockerfile: customer.api/Dockerfile
     environment:
       ASPNETCORE_ENVIRONMENT: Development
@@ -19,17 +19,17 @@ services:
       protocol: tcp
     volumes:
     - type: bind
-      source: C:\Users\isilva\AppData\Roaming/Microsoft/UserSecrets
+      source: C:\Users\ivanmds\AppData\Roaming/Microsoft/UserSecrets
       target: /root/.microsoft/usersecrets
       read_only: true
       bind:
         create_host_path: true
     - type: bind
-      source: C:\Users\isilva\AppData\Roaming/ASP.NET/Https
+      source: C:\Users\ivanmds\AppData\Roaming/ASP.NET/Https
       target: /root/.aspnet/https
       read_only: true
       bind:
         create_host_path: true
 networks:
   default:
-    name: dockercompose7196242915136893545_default
+    name: dockercompose11374987439128681747_default

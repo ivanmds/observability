@@ -6,11 +6,8 @@ receivers:
 
 exporters:
 
-  # prometheus:
-  #   #endpoint: "0.0.0.0:8889"
-  #   endpoint: http://prometheus:9090/api/v1/write
-  #   tls:
-  #     insecure: true
+  prometheus:
+    endpoint: "0.0.0.0:8889"
 
   # prometheusremotewrite:
   #   endpoint: "http://prometheus:9090/api/v1/write"
@@ -42,33 +39,6 @@ exporters:
   # file:
   #   path: /etc/output/logs2.json
   
-  # otlphttp/elasticsearch: 
-  #   endpoint: "http://elastic:9200"
-
-  # elasticsearch/trace:
-  #   endpoint: http://apm.hml.aws.acesso.intra:9200
-  #   tls:
-  #     insecure: true
-
-  # otlp/elastic:
-  #   endpoint: "apm.hml.aws.acesso.intra:9200" 
-  #   tls:
-  #     insecure: true
-  # otlp/elastic:
-  #   endpoint: 'http://apm.hml.aws.acesso.intra:9200'
-  #   tls:
-  #     insecure: true
-  
-  otlp/data-prepper:
-    endpoint: localhost:21890
-    tls:
-      insecure: true
-
-  # otlphttp:
-  #   endpoint: localhost:2021
-  #   tls:
-  #     insecure: true
-      
 extensions:
   health_check:
   pprof:
@@ -77,12 +47,12 @@ extensions:
 service:
   extensions: [health_check,pprof,zpages]
   pipelines:
-    traces:
-      receivers: [otlp]
-      exporters: [otlp/data-prepper]
+    # traces:
+    #   receivers: [otlp]
+    #   exporters: [otlp/data-prepper]
     # logs:
     #   receivers: [otlp]
     #   exporters: [otlp/data-prepper]
-    # metrics:
-    #   receivers: [otlp]
-    #   exporters: [otlp/2]
+    metrics:
+      receivers: [otlp]
+      exporters: [prometheus]
